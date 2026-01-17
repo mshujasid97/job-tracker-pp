@@ -1,3 +1,4 @@
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -18,7 +19,7 @@ class UserCreate(BaseModel):
     full_name: str
 
 class UserResponse(BaseModel):
-    id: str
+    id: UUID
     email: str
     full_name: str
     role: str

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import date
+from datetime import datetime
 from uuid import UUID
 from ..database import get_db
 from ..models.user import User
@@ -29,7 +30,7 @@ class ApplicationUpdate(BaseModel):
     notes: Optional[str] = None
 
 class ApplicationResponse(BaseModel):
-    id: str
+    id: UUID
     company_name: str
     job_title: str
     status: ApplicationStatus
@@ -37,8 +38,8 @@ class ApplicationResponse(BaseModel):
     job_url: Optional[str]
     notes: Optional[str]
     is_archived: bool
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
     
     class Config:
         from_attributes = True
