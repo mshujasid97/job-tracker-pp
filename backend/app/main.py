@@ -1,10 +1,23 @@
+"""Main FastAPI application factory and configuration.
+
+This module initializes the FastAPI app, sets up middleware (CORS for frontend communication),
+creates database tables, and registers all API routers (auth, applications, analytics).
+
+The app follows a layered architecture:
+- API layer (api/): Route handlers with request/response schemas
+- Database layer (models/): SQLAlchemy ORM entities
+- Core utilities (core/): JWT and password hashing functions
+- Configuration: Environment-based settings
+"""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .database import engine, Base
 from .api import auth, applications, analytics
 
-# Create database tables
+# Create database tables on startup (idempotent - only creates if not exists)
+# In production, use Alembic migrations instead
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -12,16 +25,18 @@ app = FastAPI(
     debug=settings.DEBUG
 )
 
-# CORS middleware
+# CORS middleware enables cross-origin requests from frontend (React app on localhost:5173)
+# This allows the frontend to make API calls to this backend from a different origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.CORS_ORIGINS,  # Whitelist frontend URLs from config
+    allow_credentials=True,  # Allow sending cookies/auth headers
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Allow all headers (including Authorization header for JWT tokens)
 )
 
-# Include routers
+# Register all API route groups with their URL prefixes
+# Each router handles a specific domain: authentication, job applications, analytics
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(applications.router, prefix="/api/applications", tags=["Applications"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])

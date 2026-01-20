@@ -1,30 +1,51 @@
+"""Application configuration using environment variables.
+
+This module defines all configurable settings for the application using Pydantic BaseSettings.
+Settings are loaded from environment variables or .env file. In production, set these
+variables in the deployment environment (Docker, cloud platform, etc.).
+
+Key configuration areas:
+- App metadata (name, debug mode)
+- Database connection string
+- JWT security parameters
+- CORS allowed origins for frontend communication
+- Optional email/SMTP settings for notifications
+"""
+
 from pydantic_settings import BaseSettings
 from typing import Optional
 
+
 class Settings(BaseSettings):
-    # App
-    APP_NAME: str = "Job Application Tracker by Shuja"
-    DEBUG: bool = True
+    """Application settings loaded from environment variables or .env file."""
     
-    # Database
+    # Application metadata
+    APP_NAME: str = "Job Application Tracker by Shuja"
+    DEBUG: bool = True  # Set to False in production
+    
+    # Database connection string - format: postgresql://user:password@host:port/dbname
+    # Default assumes PostgreSQL running locally with user 'jobtracker', password 'password'
     DATABASE_URL: str = "postgresql://jobtracker:password@localhost:5432/job_tracker"
     
-    # Security
-    SECRET_KEY: str = "your-secret-key-change-this-in-production"
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    # JWT security settings
+    SECRET_KEY: str = "your-secret-key-change-this-in-production"  # CRITICAL: Change in production!
+    ALGORITHM: str = "HS256"  # Algorithm for JWT signing
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # JWT expiry time in minutes
     
-    # CORS
+    # CORS origins - URLs that can make requests to this API
+    # Frontend URLs that should be allowed to call this backend
     CORS_ORIGINS: list = ["http://localhost:5173", "http://localhost:3000"]
     
-    # Email (optional)
+    # Email/SMTP settings (optional, for future notification features)
     SMTP_HOST: Optional[str] = None
     SMTP_PORT: Optional[int] = None
     SMTP_USER: Optional[str] = None
     SMTP_PASSWORD: Optional[str] = None
     
     class Config:
-        env_file = ".env"
-        case_sensitive = True
+        env_file = ".env"  # Load from .env file if it exists
+        case_sensitive = True  # Environment variable names are case-sensitive
 
+
+# Global settings instance used throughout the application
 settings = Settings()
