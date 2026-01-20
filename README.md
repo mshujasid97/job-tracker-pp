@@ -73,7 +73,8 @@ Job Tracker PP is a personal job application management system that helps you or
 
 ### DevOps
 - **Containerization:** Docker
-- **Database Management:** Docker Compose
+- **Orchestration:** Docker Compose
+- **Database Management:** PostgreSQL in Docker
 - **Version Control:** Git & GitHub
 
 ---
@@ -222,7 +223,29 @@ VITE_API_URL=http://localhost:8000
 
 ## 🏃 Running the Application
 
-### Option 1: Using Docker (Recommended)
+### Option 1: Using Docker Compose (Recommended) 🐳
+
+**Easiest way to run the entire application:**
+
+```bash
+# Start all services (database, backend, frontend)
+docker-compose up
+
+# Or run in background
+docker-compose up -d
+
+# Stop all services
+docker-compose down
+```
+
+That's it! Everything runs with one command:
+- ✅ PostgreSQL database
+- ✅ FastAPI backend (http://localhost:8000)
+- ✅ React frontend (http://localhost:5173)
+
+For detailed Docker documentation, see [DOCKER.md](DOCKER.md)
+
+### Option 2: Manual Setup
 
 ```bash
 # Start PostgreSQL database
