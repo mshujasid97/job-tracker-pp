@@ -1,0 +1,203 @@
+.application-list {
+  margin-top: 30px;
+}
+
+.filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.search-input,
+.status-filter {
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-input:focus,
+.status-filter:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.status-filter {
+  min-width: 180px;
+  cursor: pointer;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.no-applications {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 10px;
+  color: #999;
+}
+
+.applications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.application-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.application-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  padding: 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  flex: 1;
+  word-break: break-word;
+}
+
+.status-select {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  min-width: 100px;
+  text-align: center;
+}
+
+.status-select option {
+  background: white;
+  color: #333;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.job-title {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.date-applied {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+.job-link {
+  display: inline-block;
+  color: #667eea;
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 15px;
+  transition: color 0.3s;
+}
+
+.job-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.notes {
+  font-size: 14px;
+  color: #666;
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 5px;
+  border-left: 3px solid #667eea;
+  margin-top: 10px;
+}
+
+.notes strong {
+  color: #333;
+}
+
+.card-actions {
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-edit,
+.btn-delete {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.btn-edit {
+  background: #667eea;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.btn-delete {
+  background: #ff4757;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #ee5a6f;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .applications-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters {
+    flex-direction: column;
+  }
+  
+  .search-input {
+    width: 100%;
+  }
+}
