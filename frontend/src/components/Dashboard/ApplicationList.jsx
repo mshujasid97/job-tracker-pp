@@ -1,6 +1,6 @@
 /**
  * ApplicationList Component
- * 
+ *
  * Displays a grid of job application cards with filtering and search capabilities.
  * Features:
  * - Search applications by company name
@@ -8,24 +8,27 @@
  * - Quick status updates via dropdown
  * - Edit and delete actions
  * - Responsive grid layout
- * 
+ *
  * @param {Function} onEdit - Callback when user clicks edit button
  * @param {Number} refreshTrigger - Counter to trigger data refresh
+ * @param {Function} onApplicationChange - Callback when application is updated/deleted
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { applicationsAPI } from '../../services/api';
 import './ApplicationList.css';
 
-const ApplicationList = ({ onEdit, refreshTrigger }) => {
+const ApplicationList = ({ onEdit, refreshTrigger, onApplicationChange }) => {
   // State management
   const [applications, setApplications] = useState([]); // Array of application objects
   const [loading, setLoading] = useState(true); // Loading state for API calls
   const [error, setError] = useState(''); // Error message display
+  const [searchTerm, setSearchTerm] = useState(''); // Local search input value
+  const [activeSearch, setActiveSearch] = useState(''); // Active search term sent to API
   const [filters, setFilters] = useState({
     status: '', // Current status filter
-    search: '', // Search term for company name
   });
+  const [localRefresh, setLocalRefresh] = useState(0); // Local refresh trigger for delete/status changes
 
   // Color mapping for different application statuses
   const statusColors = {
@@ -48,41 +51,37 @@ const ApplicationList = ({ onEdit, refreshTrigger }) => {
   };
 
   /**
-   * Fetch applications when component mounts or filters/refresh trigger changes
-   * Dependencies: filters, refreshTrigger
+   * Fetch applications when component mounts or filters/refresh triggers change
    */
   useEffect(() => {
+    const fetchApplications = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        // Build query parameters from active filters
+        const params = {};
+        if (filters.status) params.status = filters.status;
+        if (activeSearch) params.search = activeSearch;
+
+        const response = await applicationsAPI.getAll(params);
+        setApplications(response.data);
+      } catch (err) {
+        setError('Failed to load applications');
+        console.error('Error fetching applications:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchApplications();
-  }, [filters, refreshTrigger]);
-
-  /**
-   * Fetches applications from API with current filters
-   * Sets loading/error states appropriately
-   */
-  const fetchApplications = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      // Build query parameters from active filters
-      const params = {};
-      if (filters.status) params.status = filters.status;
-      if (filters.search) params.search = filters.search;
-
-      const response = await applicationsAPI.getAll(params);
-      setApplications(response.data);
-    } catch (err) {
-      setError('Failed to load applications');
-      console.error('Error fetching applications:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [filters.status, activeSearch, refreshTrigger, localRefresh]);
 
   /**
    * Handles application deletion
    * Shows confirmation dialog before deleting
    * Refreshes list after successful deletion
-   * 
+   * Notifies parent component to refresh analytics
+   *
    * @param {String} id - UUID of application to delete
    */
   const handleDelete = async (id) => {
@@ -93,7 +92,10 @@ const ApplicationList = ({ onEdit, refreshTrigger }) => {
 
     try {
       await applicationsAPI.delete(id);
-      fetchApplications(); // Refresh the list
+      setLocalRefresh((prev) => prev + 1); // Trigger local refresh
+      if (onApplicationChange) {
+        onApplicationChange(); // Notify Dashboard to refresh analytics
+      }
     } catch (err) {
       alert('Failed to delete application');
       console.error('Error deleting application:', err);
@@ -103,14 +105,18 @@ const ApplicationList = ({ onEdit, refreshTrigger }) => {
   /**
    * Updates application status without opening edit form
    * Provides quick status transitions
-   * 
+   * Notifies parent component to refresh analytics
+   *
    * @param {String} id - UUID of application to update
    * @param {String} newStatus - New status value
    */
   const handleStatusChange = async (id, newStatus) => {
     try {
       await applicationsAPI.update(id, { status: newStatus });
-      fetchApplications(); // Refresh to show updated status
+      setLocalRefresh((prev) => prev + 1); // Trigger local refresh
+      if (onApplicationChange) {
+        onApplicationChange(); // Notify Dashboard to refresh analytics
+      }
     } catch (err) {
       alert('Failed to update status');
       console.error('Error updating status:', err);
@@ -118,9 +124,34 @@ const ApplicationList = ({ onEdit, refreshTrigger }) => {
   };
 
   /**
+   * Handle search button click or Enter key press
+   * Triggers search by updating activeSearch state
+   */
+  const handleSearch = () => {
+    setActiveSearch(searchTerm);
+  };
+
+  /**
+   * Handle Enter key press in search input
+   */
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  /**
+   * Clear search
+   */
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setActiveSearch('');
+  };
+
+  /**
    * Formats ISO date string to readable format
    * Example: "2025-01-20" → "Jan 20, 2025"
-   * 
+   *
    * @param {String} dateString - ISO date string
    * @returns {String} Formatted date
    */
@@ -142,18 +173,32 @@ const ApplicationList = ({ onEdit, refreshTrigger }) => {
       {/* Search and Filter Controls */}
       <div className="filters">
         {/* Company name search input */}
-        <input
-          type="text"
-          placeholder="Search by company..."
-          value={filters.search}
-          onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-          className="search-input"
-        />
-        
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search by company..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleSearchKeyPress}
+            className="search-input"
+          />
+          <button onClick={handleSearch} className="btn-search">
+            Search
+          </button>
+          {activeSearch && (
+            <button onClick={handleClearSearch} className="btn-clear-search">
+              Clear
+            </button>
+          )}
+        </div>
+
         {/* Status filter dropdown */}
         <select
           value={filters.status}
-          onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+          onChange={(e) => {
+            setFilters({ ...filters, status: e.target.value });
+            setLocalRefresh((prev) => prev + 1); // Trigger refresh when status changes
+          }}
           className="status-filter"
         >
           <option value="">All Statuses</option>

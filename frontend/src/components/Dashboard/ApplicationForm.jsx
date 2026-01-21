@@ -118,10 +118,25 @@ const ApplicationForm = ({ isOpen, onClose, onSuccess, application, mode }) => {
         status: formData.status,
       };
 
-      // Add optional fields only if they have values
+      // Add optional URL field with validation and preprocessing
       if (formData.job_url.trim()) {
-        dataToSubmit.job_url = formData.job_url.trim();
+        let url = formData.job_url.trim();
+
+        // Add https:// if no protocol present
+        if (!url.match(/^https?:\/\//i)) {
+          url = 'https://' + url;
+        }
+
+        // Validate URL format
+        try {
+          new URL(url); // Throws if invalid
+          dataToSubmit.job_url = url; // Use preprocessed URL
+        } catch {
+          throw new Error('Please enter a valid URL (e.g., careers.company.com or linkedin.com/jobs/123)');
+        }
       }
+
+      // Add optional notes field
       if (formData.notes.trim()) {
         dataToSubmit.notes = formData.notes.trim();
       }
@@ -296,12 +311,12 @@ const ApplicationForm = ({ isOpen, onClose, onSuccess, application, mode }) => {
           <div className="form-group">
             <label htmlFor="job_url">Job Posting URL</label>
             <input
-              type="url"
+              type="text"
               id="job_url"
               name="job_url"
               value={formData.job_url}
               onChange={handleChange}
-              placeholder="https://careers.company.com/job-id"
+              placeholder="https://careers.company.com/job-id or linkedin.com/jobs/123"
               disabled={loading}
             />
           </div>

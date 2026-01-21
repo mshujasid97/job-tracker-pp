@@ -106,6 +106,14 @@ const Dashboard = () => {
   };
 
   /**
+   * Handle application changes (status updates, deletions)
+   * Triggers refresh of analytics when ApplicationList makes changes
+   */
+  const handleRefreshAnalytics = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
+
+  /**
    * Format success rate for display
    * @param {Number} rate - Success rate from 0-100
    * @returns {String} Formatted percentage
@@ -189,7 +197,11 @@ const Dashboard = () => {
 
         {/* Applications List Section */}
         <section className="applications-section">
-          <ApplicationList onEdit={handleEdit} refreshTrigger={refreshTrigger} />
+          <ApplicationList
+            onEdit={handleEdit}
+            refreshTrigger={refreshTrigger}
+            onApplicationChange={handleRefreshAnalytics}
+          />
         </section>
       </main>
 
