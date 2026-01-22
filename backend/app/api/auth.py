@@ -16,13 +16,14 @@ JWT Flow:
 """
 
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
 from ..database import get_db
 from ..models.user import User
 from ..core.security import verify_password, get_password_hash, create_access_token, decode_access_token
+from ..core.rate_limiter import check_rate_limit
 from ..config import settings
 from pydantic import BaseModel, EmailStr, field_validator
 import re
@@ -127,22 +128,32 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
 
 # API Endpoints
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def register(user_data: UserCreate, db: Session = Depends(get_db)) -> UserResponse:
+async def register(request: Request, user_data: UserCreate, db: Session = Depends(get_db)) -> UserResponse:
     """Register a new user account.
-    
+
     Creates a new user with hashed password (never stored in plaintext).
-    Email must be unique in the system.
-    
+    Email must be unique in the system. Rate limited to prevent spam.
+
     Args:
+        request: FastAPI request object (for rate limiting)
         user_data: User registration data (email, password, full_name)
         db: Database session
-    
+
     Returns:
         UserResponse: Created user (without password)
-    
+
     Raises:
         HTTPException(400): If email already registered
+        HTTPException(429): If rate limit exceeded
     """
+    # Rate limiting - prevent spam account creation
+    check_rate_limit(
+        request,
+        max_requests=settings.RATE_LIMIT_REGISTER_MAX,
+        window_seconds=settings.RATE_LIMIT_REGISTER_WINDOW,
+        key_prefix="register"
+    )
+
     # Email uniqueness check - prevent duplicate accounts
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
@@ -164,22 +175,32 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)) -> User
 
 
 @router.post("/login", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)) -> Token:
+async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)) -> Token:
     """Authenticate user and return JWT access token.
-    
+
     Validates email and password, then creates a JWT token that the client stores
-    and includes in subsequent requests to authenticate.
-    
+    and includes in subsequent requests to authenticate. Rate limited to prevent brute-force.
+
     Args:
+        request: FastAPI request object (for rate limiting)
         form_data: OAuth2 form data (username field maps to email, password field)
         db: Database session
-    
+
     Returns:
         Token: JWT access token and token type
-    
+
     Raises:
         HTTPException(401): If email/password incorrect or user not found
+        HTTPException(429): If rate limit exceeded
     """
+    # Rate limiting - prevent brute-force attacks
+    check_rate_limit(
+        request,
+        max_requests=settings.RATE_LIMIT_LOGIN_MAX,
+        window_seconds=settings.RATE_LIMIT_LOGIN_WINDOW,
+        key_prefix="login"
+    )
+
     # Find user by email (OAuth2 convention uses "username" field, but we treat as email)
     user = db.query(User).filter(User.email == form_data.username).first()
     

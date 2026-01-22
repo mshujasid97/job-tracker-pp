@@ -4,9 +4,11 @@ This module sets up:
 - PostgreSQL test database (uses same DB as dev, with transaction rollback for isolation)
 - FastAPI TestClient with dependency overrides
 - Helper fixtures for creating test users and applications
+- Rate limiting disabled for tests
 """
 
 import pytest
+from unittest.mock import patch
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -17,12 +19,22 @@ from app.database import Base, get_db
 from app.models.user import User
 from app.models.application import Application, ApplicationStatus
 from app.core.security import get_password_hash
+from app.core.rate_limiter import rate_limiter
 from app.config import settings
 
 
 # Use the same PostgreSQL database (tests run with transaction rollback for isolation)
 engine = create_engine(settings.DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+@pytest.fixture(autouse=True)
+def disable_rate_limiting():
+    """Disable rate limiting for all tests by mocking Redis connection."""
+    with patch.object(rate_limiter, '_redis', None):
+        # Also ensure the redis property returns None
+        with patch.object(type(rate_limiter), 'redis', property(lambda self: None)):
+            yield
 
 
 @pytest.fixture(scope="function")
