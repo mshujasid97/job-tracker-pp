@@ -18,7 +18,7 @@ class TestRegister:
             "/api/auth/register",
             json={
                 "email": "newuser@example.com",
-                "password": "securepassword123",
+                "password": "SecurePassword123",
                 "full_name": "New User"
             }
         )
@@ -38,7 +38,7 @@ class TestRegister:
             "/api/auth/register",
             json={
                 "email": "test@example.com",  # Same as test_user
-                "password": "anotherpassword",
+                "password": "AnotherPassword123",
                 "full_name": "Another User"
             }
         )
@@ -51,11 +51,63 @@ class TestRegister:
             "/api/auth/register",
             json={
                 "email": "not-an-email",
-                "password": "password123",
+                "password": "Password123",
                 "full_name": "Test User"
             }
         )
         assert response.status_code == 422  # Validation error
+
+    def test_register_weak_password_too_short(self, client):
+        """Reject registration with password less than 8 characters."""
+        response = client.post(
+            "/api/auth/register",
+            json={
+                "email": "newuser@example.com",
+                "password": "Short1",
+                "full_name": "Test User"
+            }
+        )
+        assert response.status_code == 422
+        assert "8 characters" in response.json()["detail"][0]["msg"]
+
+    def test_register_weak_password_no_uppercase(self, client):
+        """Reject registration with password missing uppercase letter."""
+        response = client.post(
+            "/api/auth/register",
+            json={
+                "email": "newuser@example.com",
+                "password": "password123",
+                "full_name": "Test User"
+            }
+        )
+        assert response.status_code == 422
+        assert "uppercase" in response.json()["detail"][0]["msg"]
+
+    def test_register_weak_password_no_lowercase(self, client):
+        """Reject registration with password missing lowercase letter."""
+        response = client.post(
+            "/api/auth/register",
+            json={
+                "email": "newuser@example.com",
+                "password": "PASSWORD123",
+                "full_name": "Test User"
+            }
+        )
+        assert response.status_code == 422
+        assert "lowercase" in response.json()["detail"][0]["msg"]
+
+    def test_register_weak_password_no_digit(self, client):
+        """Reject registration with password missing digit."""
+        response = client.post(
+            "/api/auth/register",
+            json={
+                "email": "newuser@example.com",
+                "password": "PasswordOnly",
+                "full_name": "Test User"
+            }
+        )
+        assert response.status_code == 422
+        assert "digit" in response.json()["detail"][0]["msg"]
 
 
 class TestLogin:

@@ -10,11 +10,39 @@ The app follows a layered architecture:
 - Configuration: Environment-based settings
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from .config import settings
 from .database import engine, Base
 from .api import auth, applications, analytics
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Add security headers to all responses to protect against common attacks."""
+
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+
+        # Prevent XSS attacks by controlling resource loading
+        response.headers["X-Content-Type-Options"] = "nosniff"
+
+        # Prevent clickjacking by disallowing iframe embedding
+        response.headers["X-Frame-Options"] = "DENY"
+
+        # Enable browser XSS filter
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+
+        # Control referrer information leakage
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+        # Prevent MIME type sniffing
+        response.headers["Content-Security-Policy"] = "default-src 'self'; frame-ancestors 'none'"
+
+        # Force HTTPS in production (uncomment when using HTTPS)
+        # response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+
+        return response
 
 # Create database tables on startup (idempotent - only creates if not exists)
 # In production, use Alembic migrations instead
@@ -24,6 +52,9 @@ app = FastAPI(
     title=settings.APP_NAME,
     debug=settings.DEBUG
 )
+
+# Security headers middleware - adds protection headers to all responses
+app.add_middleware(SecurityHeadersMiddleware)
 
 # CORS middleware enables cross-origin requests from frontend (React app on localhost:5173)
 # This allows the frontend to make API calls to this backend from a different origin
