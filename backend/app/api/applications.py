@@ -12,7 +12,7 @@ Key features:
 - Archive feature: Soft-delete applications without removing them from database
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import date
@@ -59,10 +59,9 @@ class ApplicationResponse(BaseModel):
     is_archived: bool
     created_at: datetime
     updated_at: datetime
-    
+
     class Config:
         from_attributes = True  # Convert SQLAlchemy ORM model to schema
-
 
 
 # API Endpoints
@@ -77,10 +76,10 @@ async def get_applications(
     db: Session = Depends(get_db)
 ) -> List[ApplicationResponse]:
     """List all job applications for the current user with optional filtering.
-    
+
     Multi-tenant: Only returns applications belonging to current user (application.user_id == current_user.id).
     This is a critical security measure - users cannot access other users' data.
-    
+
     Args:
         status: Filter by application status (e.g., INTERVIEW, OFFER)
         search: Filter by company name (case-insensitive substring match)
@@ -89,7 +88,7 @@ async def get_applications(
         limit: Maximum number of records to return
         current_user: Authenticated user from JWT token
         db: Database session
-    
+
     Returns:
         List[ApplicationResponse]: Filtered and paginated applications
     """
@@ -98,19 +97,18 @@ async def get_applications(
         Application.user_id == current_user.id,  # Security: only user's applications
         Application.is_archived == is_archived
     )
-    
+
     # Optional filters applied in sequence
     if status:
         query = query.filter(Application.status == status)
-    
+
     if search:
         # Case-insensitive LIKE search on company name
         query = query.filter(Application.company_name.ilike(f"%{search}%"))
-    
+
     # Order by most recent applications first, then paginate
     applications = query.order_by(Application.date_applied.desc()).offset(skip).limit(limit).all()
     return applications
-
 
 
 @router.post("/", response_model=ApplicationResponse, status_code=status.HTTP_201_CREATED)
@@ -120,14 +118,14 @@ async def create_application(
     db: Session = Depends(get_db)
 ) -> ApplicationResponse:
     """Create a new job application record.
-    
+
     Automatically associates the application with the current user.
-    
+
     Args:
         application_data: Application details (company, job title, status, date, etc.)
         current_user: Authenticated user from JWT token
         db: Database session
-    
+
     Returns:
         ApplicationResponse: Created application with generated ID and timestamps
     """
@@ -136,14 +134,13 @@ async def create_application(
         user_id=current_user.id,  # Associate with current user
         **application_data.dict()  # Unpack other fields from request schema
     )
-    
+
     # Persist to database
     db.add(new_application)
     db.commit()
     db.refresh(new_application)  # Reload to get generated fields (id, created_at, updated_at)
-    
-    return new_application
 
+    return new_application
 
 
 @router.get("/{application_id}", response_model=ApplicationResponse)
@@ -153,17 +150,17 @@ async def get_application(
     db: Session = Depends(get_db)
 ) -> ApplicationResponse:
     """Get a specific job application by ID.
-    
+
     Multi-tenant: Can only access applications owned by current user.
-    
+
     Args:
         application_id: UUID of the application to retrieve
         current_user: Authenticated user from JWT token
         db: Database session
-    
+
     Returns:
         ApplicationResponse: The requested application
-    
+
     Raises:
         HTTPException(404): If application not found or user doesn't own it
     """
@@ -172,14 +169,13 @@ async def get_application(
         Application.id == application_id,
         Application.user_id == current_user.id  # Security check
     ).first()
-    
+
     if not application:
         # Return 404 whether application doesn't exist or user doesn't own it
         # (don't reveal which for security)
         raise HTTPException(status_code=404, detail="Application not found")
-    
-    return application
 
+    return application
 
 
 @router.put("/{application_id}", response_model=ApplicationResponse)
@@ -190,19 +186,19 @@ async def update_application(
     db: Session = Depends(get_db)
 ) -> ApplicationResponse:
     """Update an existing job application.
-    
+
     Only the fields provided in the request are updated (partial update).
     Multi-tenant: Can only update applications owned by current user.
-    
+
     Args:
         application_id: UUID of the application to update
         application_data: Fields to update (all optional)
         current_user: Authenticated user from JWT token
         db: Database session
-    
+
     Returns:
         ApplicationResponse: Updated application
-    
+
     Raises:
         HTTPException(404): If application not found or user doesn't own it
     """
@@ -211,20 +207,19 @@ async def update_application(
         Application.id == application_id,
         Application.user_id == current_user.id  # Security check
     ).first()
-    
+
     if not application:
         raise HTTPException(status_code=404, detail="Application not found")
-    
+
     # Update only provided fields (exclude_unset=True skips None/default values)
     for field, value in application_data.dict(exclude_unset=True).items():
         setattr(application, field, value)
-    
+
     # Persist changes
     db.commit()
     db.refresh(application)  # Reload to get updated_at timestamp
-    
-    return application
 
+    return application
 
 
 @router.delete("/{application_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -234,15 +229,15 @@ async def delete_application(
     db: Session = Depends(get_db)
 ) -> None:
     """Delete a job application permanently.
-    
+
     This is a hard delete (removes from database). For soft delete, use the archive endpoint.
     Multi-tenant: Can only delete applications owned by current user.
-    
+
     Args:
         application_id: UUID of the application to delete
         current_user: Authenticated user from JWT token
         db: Database session
-    
+
     Raises:
         HTTPException(404): If application not found or user doesn't own it
     """
@@ -251,16 +246,15 @@ async def delete_application(
         Application.id == application_id,
         Application.user_id == current_user.id  # Security check
     ).first()
-    
+
     if not application:
         raise HTTPException(status_code=404, detail="Application not found")
-    
+
     # Remove from database
     db.delete(application)
     db.commit()
-    
-    return None
 
+    return None
 
 
 @router.patch("/{application_id}/archive", response_model=ApplicationResponse)
@@ -270,19 +264,19 @@ async def toggle_archive(
     db: Session = Depends(get_db)
 ) -> ApplicationResponse:
     """Toggle archive status of a job application (soft delete).
-    
+
     Archived applications are hidden from default views but not deleted.
     This is useful for hiding old or rejected applications without removing them.
     Multi-tenant: Can only archive applications owned by current user.
-    
+
     Args:
         application_id: UUID of the application to archive/unarchive
         current_user: Authenticated user from JWT token
         db: Database session
-    
+
     Returns:
         ApplicationResponse: Updated application with toggled is_archived flag
-    
+
     Raises:
         HTTPException(404): If application not found or user doesn't own it
     """
@@ -291,13 +285,13 @@ async def toggle_archive(
         Application.id == application_id,
         Application.user_id == current_user.id  # Security check
     ).first()
-    
+
     if not application:
         raise HTTPException(status_code=404, detail="Application not found")
-    
+
     # Toggle archive flag (soft delete - record stays in database)
     application.is_archived = not application.is_archived
     db.commit()
     db.refresh(application)
-    
+
     return application

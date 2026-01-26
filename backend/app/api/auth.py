@@ -15,24 +15,27 @@ JWT Flow:
 - Tokens expire after ACCESS_TOKEN_EXPIRE_MINUTES (configured in settings)
 """
 
+import re
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
+from pydantic import BaseModel, EmailStr, field_validator
 from ..database import get_db
 from ..models.user import User
-from ..core.security import verify_password, get_password_hash, create_access_token, decode_access_token
+from ..core.security import (
+    verify_password, get_password_hash, create_access_token, decode_access_token
+)
 from ..core.rate_limiter import check_rate_limit
 from ..core.logging import logger
 from ..config import settings
-from pydantic import BaseModel, EmailStr, field_validator
-import re
 
 router = APIRouter()
 # OAuth2 scheme: tells FastAPI to expect JWT tokens in Authorization header
 # tokenUrl specifies the endpoint where clients get tokens (the /login endpoint)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+
 
 # Pydantic schemas for request/response validation
 class UserCreate(BaseModel):
@@ -69,7 +72,7 @@ class UserResponse(BaseModel):
     email: str
     full_name: str
     role: str
-    
+
     class Config:
         from_attributes = True  # Allows ORM model conversion to schema
 
@@ -80,22 +83,25 @@ class Token(BaseModel):
     token_type: str
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+) -> User:
     """Dependency for protecting routes that require authentication.
-    
+
     Extracts JWT token from Authorization header, validates it, and returns the current user.
     Used with Depends() in protected route handlers.
-    
+
     Args:
         token: JWT token extracted from Authorization header by oauth2_scheme
         db: Database session injected by dependency injection
-    
+
     Returns:
         User object for the authenticated user
-    
+
     Raises:
         HTTPException(401): If token is invalid, expired, or user not found
-    
+
     Example:
         @router.get("/me", response_model=UserResponse)
         async def get_profile(current_user: User = Depends(get_current_user)):
@@ -107,29 +113,32 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    
+
     # Decode and validate JWT token signature and expiry
     payload = decode_access_token(token)
     if payload is None:
         raise credentials_exception
-    
+
     # Extract user_id from token payload (stored as "sub" claim)
     user_id: str = payload.get("sub")
     if user_id is None:
         raise credentials_exception
-    
+
     # Verify user still exists in database
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
         raise credentials_exception
-    
-    return user
 
+    return user
 
 
 # API Endpoints
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def register(request: Request, user_data: UserCreate, db: Session = Depends(get_db)) -> UserResponse:
+async def register(
+    request: Request,
+    user_data: UserCreate,
+    db: Session = Depends(get_db)
+) -> UserResponse:
     """Register a new user account.
 
     Creates a new user with hashed password (never stored in plaintext).
@@ -159,14 +168,14 @@ async def register(request: Request, user_data: UserCreate, db: Session = Depend
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
+
     # Create new user with hashed password (bcrypt hashing happens in get_password_hash)
     new_user = User(
         email=user_data.email,
         hashed_password=get_password_hash(user_data.password),  # Password is hashed and salted
         full_name=user_data.full_name
     )
-    
+
     # Persist to database
     db.add(new_user)
     db.commit()
@@ -177,7 +186,11 @@ async def register(request: Request, user_data: UserCreate, db: Session = Depend
 
 
 @router.post("/login", response_model=Token)
-async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)) -> Token:
+async def login(
+    request: Request,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+) -> Token:
     """Authenticate user and return JWT access token.
 
     Validates email and password, then creates a JWT token that the client stores
@@ -205,7 +218,7 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
 
     # Find user by email (OAuth2 convention uses "username" field, but we treat as email)
     user = db.query(User).filter(User.email == form_data.username).first()
-    
+
     # Verify password using bcrypt comparison (timing-safe)
     if not user or not verify_password(form_data.password, user.hashed_password):
         logger.warning(f"Failed login attempt for: {form_data.username}")
@@ -214,7 +227,7 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     # Create JWT token with expiry time
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -227,14 +240,16 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user_info(current_user: User = Depends(get_current_user)) -> UserResponse:
+async def get_current_user_info(
+    current_user: User = Depends(get_current_user)
+) -> UserResponse:
     """Get the currently authenticated user's information.
-    
+
     Protected endpoint - requires valid JWT token in Authorization header.
-    
+
     Args:
         current_user: Authenticated user injected by get_current_user dependency
-    
+
     Returns:
         UserResponse: Current user's profile data
     """

@@ -44,16 +44,16 @@ Base = declarative_base()
 
 def get_db() -> Session:
     """Dependency injection function for database sessions in route handlers.
-    
+
     FastAPI will call this function for each request to provide a database session.
     The session is automatically closed when the request completes (in the finally block).
-    
+
     Usage:
         @router.get("/items")
         async def get_items(db: Session = Depends(get_db)):
             items = db.query(Item).all()
             return items
-    
+
     Yields:
         Session: A new SQLAlchemy session for the current request
     """

@@ -62,6 +62,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
         return response
 
+
 # Create database tables on startup (idempotent - only creates if not exists)
 # In production, use Alembic migrations instead
 Base.metadata.create_all(bind=engine)
@@ -93,6 +94,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(applications.router, prefix="/api/applications", tags=["Applications"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
 
+
 @app.get("/")
 async def root():
     return {
@@ -100,6 +102,7 @@ async def root():
         "docs": "/docs",
         "version": "1.0.0"
     }
+
 
 @app.get("/health")
 async def health_check():

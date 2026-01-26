@@ -12,12 +12,12 @@ Key features:
 - Timestamps: Track when user was created and last updated
 """
 
+import enum
+import uuid
+from datetime import datetime
 from sqlalchemy import Column, String, DateTime, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from datetime import datetime
-import uuid
-import enum
 from ..database import Base
 
 
@@ -29,7 +29,7 @@ class UserRole(str, enum.Enum):
 
 class User(Base):
     """User entity representing a registered account.
-    
+
     Attributes:
         id: Primary key (UUID) - unique identifier for the user
         email: User's email address (unique, indexed)
@@ -39,34 +39,34 @@ class User(Base):
         created_at: Timestamp when account was created
         updated_at: Timestamp when account was last modified
         applications: Relationship to all Application records owned by this user
-    
+
     Database:
         - Table name: "users"
         - Email is indexed for fast query lookups
         - Relationships use cascade delete to remove user's applications when user is deleted
     """
-    
+
     __tablename__ = "users"
-    
+
     # Primary key: UUID provides distributed uniqueness without database sequence dependency
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    
+
     # Email: Must be unique (no two accounts with same email), indexed for fast login queries
     email = Column(String, unique=True, nullable=False, index=True)
-    
+
     # Hashed password: Never store plaintext passwords! Always use bcrypt hashing (via get_password_hash)
     hashed_password = Column(String, nullable=False)
-    
+
     # Full name: For display purposes in the UI
     full_name = Column(String, nullable=False)
-    
+
     # Role: Supports future admin functionality (admin users could manage other users, etc.)
     role = Column(Enum(UserRole), default=UserRole.USER, nullable=False)
-    
+
     # Timestamps: Automatically managed for audit trail
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relationship: One-to-many with Application
     # back_populates allows bidirectional access: user.applications or app.user
     # cascade="all, delete-orphan" means deleting a user removes all their applications
