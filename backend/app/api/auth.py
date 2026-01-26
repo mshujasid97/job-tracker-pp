@@ -24,6 +24,7 @@ from ..database import get_db
 from ..models.user import User
 from ..core.security import verify_password, get_password_hash, create_access_token, decode_access_token
 from ..core.rate_limiter import check_rate_limit
+from ..core.logging import logger
 from ..config import settings
 from pydantic import BaseModel, EmailStr, field_validator
 import re
@@ -170,7 +171,8 @@ async def register(request: Request, user_data: UserCreate, db: Session = Depend
     db.add(new_user)
     db.commit()
     db.refresh(new_user)  # Reload to get generated fields (id, created_at, etc.)
-    
+
+    logger.info(f"New user registered: {user_data.email}")
     return new_user
 
 
@@ -206,6 +208,7 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
     
     # Verify password using bcrypt comparison (timing-safe)
     if not user or not verify_password(form_data.password, user.hashed_password):
+        logger.warning(f"Failed login attempt for: {form_data.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
@@ -218,7 +221,8 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
         data={"sub": str(user.id)},  # Payload: store user_id as "sub" claim
         expires_delta=access_token_expires
     )
-    
+
+    logger.info(f"User logged in: {user.email}")
     return {"access_token": access_token, "token_type": "bearer"}
 
 

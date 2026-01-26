@@ -10,12 +10,30 @@ The app follows a layered architecture:
 - Configuration: Environment-based settings
 """
 
+import time
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from .config import settings
 from .database import engine, Base
 from .api import auth, applications, analytics
+from .core.logging import logger
+
+
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
+    """Log all incoming requests and their response times."""
+
+    async def dispatch(self, request: Request, call_next):
+        start_time = time.time()
+        response = await call_next(request)
+        duration = time.time() - start_time
+
+        # Log request details
+        logger.info(
+            f"{request.method} {request.url.path} - {response.status_code} - {duration:.3f}s"
+        )
+
+        return response
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -52,6 +70,9 @@ app = FastAPI(
     title=settings.APP_NAME,
     debug=settings.DEBUG
 )
+
+# Request logging middleware - logs all requests with timing
+app.add_middleware(RequestLoggingMiddleware)
 
 # Security headers middleware - adds protection headers to all responses
 app.add_middleware(SecurityHeadersMiddleware)
