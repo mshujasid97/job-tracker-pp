@@ -4,16 +4,29 @@ A full-stack web application for tracking job applications with analytics, built
 
 ![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![React](https://img.shields.io/badge/react-19.2+-blue.svg)
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![Built with Claude](https://img.shields.io/badge/Built%20with-Claude%20AI-blueviolet.svg)
 
 > 🤖 **Built with AI Assistance**: This project is being developed with the assistance of [Claude](https://claude.ai), Anthropic's AI assistant, to demonstrate modern full-stack development practices and rapid prototyping capabilities.
 
-## 🎉 Version 1.0.0 Release
+## 🎉 Version 1.1.0 Release
 
-This is the **first production-ready version** of Job Tracker with complete functionality for managing job applications!
+**Production hardening release** with security improvements, testing, and observability.
 
-**What's New in V1.0:**
+**What's New in V1.1:**
+- ✅ Comprehensive test suite (45 tests, 97% coverage)
+- ✅ Security headers middleware (XSS, clickjacking, CSP protection)
+- ✅ Password validation (minimum 8 chars, uppercase, lowercase, digit)
+- ✅ Rate limiting with Redis (brute-force & spam protection)
+- ✅ Structured request and authentication logging
+
+---
+
+## 📦 Version 1.0.0
+
+**Initial production-ready release** with complete functionality for managing job applications.
+
+**What's in V1.0:**
 - ✅ Complete authentication system with JWT
 - ✅ Full CRUD operations for job applications
 - ✅ Real-time dashboard analytics
