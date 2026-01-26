@@ -92,8 +92,8 @@ jobs:
         run: |
           flake8 app/ --max-line-length=120 --ignore=E501,W503
 
-  frontend-build:
-    name: Frontend Build
+  frontend-tests:
+    name: Frontend Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -110,6 +110,10 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
+
+      - name: Run tests
+        working-directory: frontend
+        run: npm run test:run
 
       - name: Build
         working-directory: frontend
