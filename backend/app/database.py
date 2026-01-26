@@ -11,7 +11,7 @@ The dependency injection pattern (Depends(get_db)) ensures:
 Usage in route handlers:
     from fastapi import Depends
     from ..database import get_db
-    
+
     @router.get("/items")
     async def get_items(db: Session = Depends(get_db)):
         # db is a fresh session for this request
