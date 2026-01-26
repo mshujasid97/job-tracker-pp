@@ -9,6 +9,15 @@ A full-stack web application for tracking job applications with analytics, built
 
 > 🤖 **Built with AI Assistance**: This project is being developed with the assistance of [Claude](https://claude.ai), Anthropic's AI assistant, to demonstrate modern full-stack development practices and rapid prototyping capabilities.
 
+## 🌐 Live Demo
+
+**Try the application live:**
+- **Frontend:** [https://job-tracker-pp.vercel.app](https://job-tracker-pp.vercel.app)
+- **Backend API:** [https://job-tracker-api1.onrender.com](https://job-tracker-api1.onrender.com)
+- **API Docs:** [https://job-tracker-api1.onrender.com/docs](https://job-tracker-api1.onrender.com/docs)
+
+---
+
 ## 🎉 Version 1.1.0 Release
 
 **Production hardening release** with security improvements, testing, and observability.
@@ -205,7 +214,7 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/job-tracker-pp.git
+git clone https://github.com/mshujasid97/job-tracker-pp.git
 cd job-tracker-pp
 ```
 
@@ -530,7 +539,7 @@ Contributions are welcome! Please follow these steps:
 
 **Shuja**
 
-- Project Link: [https://github.com/mshuj/job-tracker-by-shuja](https://github.com/mshuj/job-tracker-by-shuja)
+- Project Link: [https://github.com/mshujasid97/job-tracker-pp](https://github.com/mshujasid97/job-tracker-pp)
 
 ### Development Approach
 
