@@ -34,7 +34,11 @@ class Settings(BaseSettings):
 
     # CORS origins - URLs that can make requests to this API
     # Frontend URLs that should be allowed to call this backend
-    CORS_ORIGINS: list = ["http://localhost:5173", "http://localhost:3000"]
+    CORS_ORIGINS: list = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://job-tracker-pp.vercel.app"
+    ]
 
     # Redis settings for rate limiting
     REDIS_URL: Optional[str] = "redis://localhost:6379/0"
