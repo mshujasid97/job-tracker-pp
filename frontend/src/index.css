@@ -1,3 +1,58 @@
+/* CSS Variables for theming */
+:root {
+  /* Light theme (default) */
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  --bg-card: #ffffff;
+
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #888888;
+
+  --border-color: #e0e0e0;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-hover: rgba(0, 0, 0, 0.15);
+
+  --accent-primary: #667eea;
+  --accent-secondary: #764ba2;
+  --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  --danger: #ff4757;
+  --danger-hover: #ff3838;
+
+  --input-bg: #ffffff;
+  --input-border: #e0e0e0;
+  --input-focus: #667eea;
+}
+
+/* Dark theme */
+[data-theme='dark'] {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --bg-card: #1f2937;
+
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+
+  --border-color: #374151;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-hover: rgba(0, 0, 0, 0.4);
+
+  --accent-primary: #818cf8;
+  --accent-secondary: #a78bfa;
+  --accent-gradient: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+
+  --input-bg: #374151;
+  --input-border: #4b5563;
+  --input-focus: #818cf8;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,7 +65,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {

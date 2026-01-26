@@ -15,6 +15,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { analyticsAPI } from '../../services/api';
 import ApplicationList from './ApplicationList';
@@ -24,6 +25,7 @@ import './Dashboard.css';
 const Dashboard = () => {
   // Auth context
   const { user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   // Analytics state
@@ -132,6 +134,14 @@ const Dashboard = () => {
         </div>
         <div className="header-right">
           <span className="user-greeting">Welcome, {user?.full_name}!</span>
+          <button
+            onClick={toggleTheme}
+            className="btn-theme-toggle"
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDark ? '☀️' : '🌙'}
+          </button>
           <button onClick={handleCreateClick} className="btn-add-application">
             + Add Application
           </button>

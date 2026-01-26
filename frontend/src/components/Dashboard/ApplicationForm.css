@@ -23,20 +23,21 @@
   }
 }
 
-/* Modal Card - Centered white container */
+/* Modal Card - Centered container */
 .modal-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px var(--shadow-color);
   width: 100%;
   max-width: 700px;
   max-height: 95vh;
   overflow-y: auto;
   animation: slideUp 0.3s ease-out;
+  transition: background-color 0.3s ease;
 
   /* Better scrollbar for all browsers */
   scrollbar-width: thin;
-  scrollbar-color: #667eea #f1f1f1;
+  scrollbar-color: var(--accent-primary) var(--bg-secondary);
 }
 
 @keyframes slideUp {
@@ -53,11 +54,11 @@
 /* Modal Header */
 .modal-header {
   padding: 24px 30px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   border-radius: 12px 12px 0 0;
 }
 
@@ -103,12 +104,12 @@
 
 /* Form Error Message */
 .form-error {
-  background: #fee;
-  color: #c33;
+  background: rgba(255, 71, 87, 0.1);
+  color: var(--danger);
   padding: 12px 16px;
   border-radius: 6px;
   margin-bottom: 20px;
-  border-left: 4px solid #c33;
+  border-left: 4px solid var(--danger);
   font-size: 14px;
 }
 
@@ -121,12 +122,12 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   font-size: 14px;
 }
 
 .form-group .required {
-  color: #ff4757;
+  color: var(--danger);
   margin-left: 2px;
 }
 
@@ -138,26 +139,28 @@
 .form-group textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--input-border);
   border-radius: 8px;
   font-size: 14px;
   font-family: inherit;
   transition: all 0.3s;
   box-sizing: border-box;
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--input-focus);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-group input:disabled,
 .form-group select:disabled,
 .form-group textarea:disabled {
-  background: #f5f5f5;
+  background: var(--bg-secondary);
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -183,7 +186,7 @@
 /* Placeholder styling */
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-  color: #999;
+  color: var(--text-muted);
 }
 
 /* Form Actions - Button container */
@@ -192,7 +195,7 @@
   gap: 12px;
   margin-top: 30px;
   padding-top: 20px;
-  border-top: 2px solid #f0f0f0;
+  border-top: 2px solid var(--border-color);
 }
 
 /* Button Styles */
@@ -210,18 +213,18 @@
 }
 
 .btn-cancel {
-  background: #f5f5f5;
-  color: #666;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
 }
 
 .btn-cancel:hover:not(:disabled) {
-  background: #e5e5e5;
+  background: var(--border-color);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-color);
 }
 
 .btn-submit {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   color: white;
 }
 
@@ -238,7 +241,7 @@
 }
 
 .btn-submit:disabled {
-  background: #ccc;
+  background: var(--border-color);
 }
 
 /* Loading state */
@@ -303,16 +306,16 @@
 }
 
 .modal-card::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--bg-secondary);
   border-radius: 10px;
 }
 
 .modal-card::-webkit-scrollbar-thumb {
-  background: #667eea;
+  background: var(--accent-primary);
   border-radius: 10px;
-  border: 2px solid #f1f1f1;
+  border: 2px solid var(--bg-secondary);
 }
 
 .modal-card::-webkit-scrollbar-thumb:hover {
-  background: #5568d3;
+  background: var(--accent-secondary);
 }

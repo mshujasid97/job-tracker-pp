@@ -1,24 +1,26 @@
 /* Dashboard Container */
 .dashboard {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: var(--bg-gradient);
+  transition: background 0.3s ease;
 }
 
 /* Dashboard Header */
 .dashboard-header {
-  background: white;
+  background: var(--bg-card);
   padding: 20px 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .header-left h1 {
-  color: #667eea;
+  color: var(--accent-primary);
   font-size: 28px;
   margin: 0;
   font-weight: 700;
@@ -31,15 +33,34 @@
 }
 
 .user-greeting {
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
   font-size: 15px;
+}
+
+/* Theme Toggle Button */
+.btn-theme-toggle {
+  padding: 10px;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-theme-toggle:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
 }
 
 /* Add Application Button */
 .btn-add-application {
   padding: 10px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   color: white;
   border: none;
   border-radius: 8px;
@@ -58,7 +79,7 @@
 /* Logout Button */
 .btn-logout {
   padding: 10px 20px;
-  background: #ff4757;
+  background: var(--danger);
   color: white;
   border: none;
   border-radius: 8px;
@@ -69,7 +90,7 @@
 }
 
 .btn-logout:hover {
-  background: #ff3838;
+  background: var(--danger-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
 }
@@ -89,17 +110,18 @@
 /* Stats Loading/Error States */
 .stats-loading,
 .stats-error {
-  background: white;
+  background: var(--bg-card);
   padding: 30px;
   border-radius: 12px;
   text-align: center;
-  color: #666;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: var(--text-secondary);
+  box-shadow: 0 2px 8px var(--shadow-color);
+  transition: background-color 0.3s ease;
 }
 
 .stats-error {
-  color: #ff4757;
-  border-left: 4px solid #ff4757;
+  color: var(--danger);
+  border-left: 4px solid var(--danger);
 }
 
 /* Stats Grid */
@@ -112,25 +134,25 @@
 
 /* Stat Card */
 .stat-card {
-  background: white;
+  background: var(--bg-card);
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px var(--shadow-color);
   transition: all 0.3s;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--accent-primary);
 }
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px var(--shadow-hover);
 }
 
 .stat-value {
   font-size: 42px;
   font-weight: 700;
-  color: #667eea;
+  color: var(--accent-primary);
   margin-bottom: 8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -138,7 +160,7 @@
 
 .stat-label {
   font-size: 14px;
-  color: #888;
+  color: var(--text-muted);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -146,15 +168,16 @@
 
 /* Status Breakdown Section */
 .status-breakdown {
-  background: white;
+  background: var(--bg-card);
   padding: 25px 30px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px var(--shadow-color);
+  transition: background-color 0.3s ease;
 }
 
 .status-breakdown h3 {
   margin: 0 0 20px 0;
-  color: #333;
+  color: var(--text-primary);
   font-size: 18px;
   font-weight: 600;
 }

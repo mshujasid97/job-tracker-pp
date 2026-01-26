@@ -63,6 +63,16 @@ vi.mock('../../context/AuthContext', () => ({
   }),
 }))
 
+// Mock useTheme hook
+const mockToggleTheme = vi.fn()
+vi.mock('../../context/ThemeContext', () => ({
+  useTheme: () => ({
+    theme: 'light',
+    toggleTheme: mockToggleTheme,
+    isDark: false,
+  }),
+}))
+
 import { analyticsAPI, applicationsAPI } from '../../services/api'
 
 // Mock analytics data

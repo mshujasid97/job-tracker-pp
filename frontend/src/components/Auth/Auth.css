@@ -3,29 +3,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   padding: 20px;
+  transition: background 0.3s ease;
 }
 
 .auth-card {
-  background: white;
+  background: var(--bg-card);
   padding: 40px;
   border-radius: 10px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px var(--shadow-color);
   width: 100%;
   max-width: 400px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .auth-card h1 {
   font-size: 24px;
-  color: #667eea;
+  color: var(--accent-primary);
   margin-bottom: 10px;
   text-align: center;
 }
 
 .auth-card h2 {
   font-size: 20px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 30px;
   text-align: center;
 }
@@ -37,35 +39,37 @@
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  color: #555;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .form-group input {
   width: 100%;
   padding: 12px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--input-border);
   border-radius: 5px;
   font-size: 14px;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, background-color 0.3s;
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--input-focus);
 }
 
 .form-hint {
   display: block;
   margin-top: 5px;
-  color: #888;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
 .btn-primary {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   color: white;
   border: none;
   border-radius: 5px;
@@ -86,22 +90,23 @@
 }
 
 .error-message {
-  background: #fee;
-  color: #c33;
+  background: rgba(255, 71, 87, 0.1);
+  color: var(--danger);
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 20px;
   font-size: 14px;
+  border-left: 3px solid var(--danger);
 }
 
 .auth-link {
   text-align: center;
   margin-top: 20px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .auth-link a {
-  color: #667eea;
+  color: var(--accent-primary);
   text-decoration: none;
   font-weight: 600;
 }
