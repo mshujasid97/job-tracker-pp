@@ -136,8 +136,9 @@ const Register = () => {
               onChange={handleChange}
               placeholder="••••••••"
               required
-              minLength="6"
+              minLength="8"
             />
+            <small className="form-hint">Min 8 chars, uppercase, lowercase, and number</small>
           </div>
           
           {/* Submit button */}

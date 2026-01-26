@@ -24,6 +24,10 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
     """Log all incoming requests and their response times."""
 
     async def dispatch(self, request: Request, call_next):
+        # Skip logging for CORS preflight requests
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
         start_time = time.time()
         response = await call_next(request)
         duration = time.time() - start_time
@@ -40,6 +44,10 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add security headers to all responses to protect against common attacks."""
 
     async def dispatch(self, request: Request, call_next):
+        # Skip security headers for CORS preflight requests (let CORSMiddleware handle them)
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
         response = await call_next(request)
 
         # Prevent XSS attacks by controlling resource loading
@@ -54,8 +62,8 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         # Control referrer information leakage
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
-        # Prevent MIME type sniffing
-        response.headers["Content-Security-Policy"] = "default-src 'self'; frame-ancestors 'none'"
+        # Prevent MIME type sniffing (relaxed for API)
+        response.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
 
         # Force HTTPS in production (uncomment when using HTTPS)
         # response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"

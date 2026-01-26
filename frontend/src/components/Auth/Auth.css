@@ -55,6 +55,13 @@
   border-color: #667eea;
 }
 
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  color: #888;
+  font-size: 12px;
+}
+
 .btn-primary {
   width: 100%;
   padding: 12px;
