@@ -170,7 +170,6 @@ job-tracker-pp/
 ├── .gitignore
 ├── docker-compose.yml       # Docker orchestration
 ├── DOCKER.md               # Docker setup documentation
-├── package.json            # Root dependencies (Claude)
 └── README.md               # This file
 ```
 
