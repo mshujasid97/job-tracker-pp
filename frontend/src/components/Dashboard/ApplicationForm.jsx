@@ -29,6 +29,8 @@ const ApplicationForm = ({ isOpen, onClose, onSuccess, application, mode }) => {
     status: 'applied',
     job_url: '',
     notes: '',
+    follow_up_date: '',
+    last_contact_date: '',
   });
 
   // UI state
@@ -61,6 +63,8 @@ const ApplicationForm = ({ isOpen, onClose, onSuccess, application, mode }) => {
           status: application.status || 'applied',
           job_url: application.job_url || '',
           notes: application.notes || '',
+          follow_up_date: application.follow_up_date || '',
+          last_contact_date: application.last_contact_date || '',
         });
       } else {
         // Reset form for create mode
@@ -71,6 +75,8 @@ const ApplicationForm = ({ isOpen, onClose, onSuccess, application, mode }) => {
           status: 'applied',
           job_url: '',
           notes: '',
+          follow_up_date: '',
+          last_contact_date: '',
         });
       }
       setError('');
@@ -139,6 +145,14 @@ const ApplicationForm = ({ isOpen, onClose, onSuccess, application, mode }) => {
       // Add optional notes field
       if (formData.notes.trim()) {
         dataToSubmit.notes = formData.notes.trim();
+      }
+
+      // Add optional follow-up tracking fields
+      if (formData.follow_up_date) {
+        dataToSubmit.follow_up_date = formData.follow_up_date;
+      }
+      if (formData.last_contact_date) {
+        dataToSubmit.last_contact_date = formData.last_contact_date;
       }
 
       // Call appropriate API endpoint based on mode
@@ -319,6 +333,38 @@ const ApplicationForm = ({ isOpen, onClose, onSuccess, application, mode }) => {
               placeholder="https://careers.company.com/job-id or linkedin.com/jobs/123"
               disabled={loading}
             />
+          </div>
+
+          {/* Follow-up Tracking Section */}
+          <div className="form-row">
+            {/* Follow-up Date Field (Optional) */}
+            <div className="form-group">
+              <label htmlFor="follow_up_date">Follow-up Date</label>
+              <input
+                type="date"
+                id="follow_up_date"
+                name="follow_up_date"
+                value={formData.follow_up_date}
+                onChange={handleChange}
+                disabled={loading}
+              />
+              <span className="form-hint">Set a reminder to follow up</span>
+            </div>
+
+            {/* Last Contact Date Field (Optional) */}
+            <div className="form-group">
+              <label htmlFor="last_contact_date">Last Contact Date</label>
+              <input
+                type="date"
+                id="last_contact_date"
+                name="last_contact_date"
+                value={formData.last_contact_date}
+                onChange={handleChange}
+                disabled={loading}
+                max={new Date().toISOString().split('T')[0]}
+              />
+              <span className="form-hint">Last interaction with recruiter</span>
+            </div>
           </div>
 
           {/* Notes Field (Optional) */}

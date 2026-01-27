@@ -222,14 +222,26 @@ export const analyticsAPI = {
   /**
    * Get daily application submission timeline.
    * GET /api/analytics/timeline?days=30
-   * 
+   *
    * Returns array of {date, count} for each day showing how many
    * applications were submitted. Useful for trend visualization.
-   * 
+   *
    * @param {number} days - Days to look back (default: 30)
    * @returns {Promise} Axios promise with array of timeline data
    */
   getTimeline: (days = 30) => api.get('/api/analytics/timeline', { params: { days } }),
+
+  /**
+   * Get upcoming and overdue follow-up reminders.
+   * GET /api/analytics/reminders
+   *
+   * Returns:
+   * - upcoming: Follow-ups due in the next 7 days
+   * - overdue: Follow-ups that are past due
+   *
+   * @returns {Promise} Axios promise with RemindersResponse object
+   */
+  getReminders: () => api.get('/api/analytics/reminders'),
 };
 
 /**

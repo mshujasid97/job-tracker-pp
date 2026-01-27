@@ -4,7 +4,7 @@ A full-stack web application for tracking job applications with analytics, built
 
 ![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![React](https://img.shields.io/badge/react-19.2+-blue.svg)
-![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
 ![Built with Claude](https://img.shields.io/badge/Built%20with-Claude%20AI-blueviolet.svg)
 
 > 🤖 **Built with AI Assistance**: This project is being developed with the assistance of [Claude](https://claude.ai), Anthropic's AI assistant, to demonstrate modern full-stack development practices and rapid prototyping capabilities.
@@ -18,12 +18,27 @@ A full-stack web application for tracking job applications with analytics, built
 
 ---
 
-## 🎉 Version 1.1.0 Release
+## 🎉 Version 1.2.0 Release
+
+**Analytics & Enhanced Tracking release** with visual charts and follow-up management.
+
+**What's New in V1.2:**
+- ✅ **Donut Chart** - Visual status breakdown with Recharts library
+- ✅ **Two-Column Dashboard** - Reorganized layout with chart and 2x2 stats grid
+- ✅ **Follow-up Tracking** - Set reminder dates for applications
+- ✅ **Notification Bell** - Header dropdown showing overdue/upcoming follow-ups
+- ✅ **Success Rate Colors** - Color-coded percentage (red/yellow/green)
+- ✅ **Dark Mode Support** - Toggle between light and dark themes
+- ✅ **Dark Mode Chart Fix** - Tooltips and legends adapt to theme
+
+---
+
+## 📦 Version 1.1.0
 
 **Production hardening release** with security improvements, testing, and observability.
 
-**What's New in V1.1:**
-- ✅ Comprehensive test suite (45 tests, 97% coverage)
+**What's in V1.1:**
+- ✅ Comprehensive test suite (45 backend + 39 frontend tests)
 - ✅ Security headers middleware (XSS, clickjacking, CSP protection)
 - ✅ Password validation (minimum 8 chars, uppercase, lowercase, digit)
 - ✅ Rate limiting with Redis (brute-force & spam protection)
@@ -88,12 +103,21 @@ Job Tracker PP is a personal job application management system that helps you or
 - ✅ **Enhanced Modals** - Larger, more spacious forms (700px) with improved scrollbar styling
 - ✅ **Comprehensive Documentation** - Inline comments and JSDoc throughout codebase
 
-### Analytics Dashboard
-- ✅ **Live Statistics** - Total applications, status breakdown, weekly/monthly counts
-- ✅ **Success Rate Tracking** - Real-time calculation of acceptance rate
+### Analytics Dashboard (V1.2)
+- ✅ **Donut Chart** - Visual status breakdown with interactive tooltips
+- ✅ **Two-Column Layout** - Chart on left, 2x2 stats grid on right
+- ✅ **Live Statistics** - Total applications, this week, this month counts
+- ✅ **Color-Coded Success Rate** - Red (≤33%), Yellow (34-66%), Green (≥67%)
 - ✅ **Instant Refresh** - Analytics update automatically on any application change
 - ✅ **Timeline Data** - Application submission trends over customizable time periods
-- 📊 **Visual Charts** - (Coming in V2.0) Interactive visualizations for analytics data
+- ✅ **Dark Mode Charts** - Tooltips and legends adapt to theme colors
+
+### Follow-up Tracking (V1.2)
+- ✅ **Follow-up Date** - Set reminder dates when creating/editing applications
+- ✅ **Last Contact Date** - Track last interaction with recruiter
+- ✅ **Notification Bell** - Header icon with badge showing reminder count
+- ✅ **Overdue Alerts** - Red-highlighted items for past-due follow-ups
+- ✅ **Upcoming Reminders** - Shows follow-ups due in the next 7 days
 
 ### UI/UX Improvements (V1.0)
 - ✅ **Search Button Control** - Manual search prevents unwanted input focus loss
@@ -103,15 +127,19 @@ Job Tracker PP is a personal job application management system that helps you or
 - ✅ **Cross-browser Scrollbars** - Styled scrollbars for Chrome, Firefox, and Safari
 - ✅ **Enter Key Support** - Press Enter in search box to execute search
 
+### Theme Support (V1.2)
+- ✅ **Dark Mode Toggle** - Switch between light and dark themes
+- ✅ **Theme Persistence** - Preference saved to localStorage
+- ✅ **Smooth Transitions** - CSS transitions for theme changes
+- ✅ **Component Adaptation** - All UI elements support both themes
+
 ### Upcoming Features (V2.0+)
 - 📧 Email reminders for follow-ups
 - 📎 Document uploads (resume, cover letters)
-- 📝 Rich text notes with formatting
+- 📝 Activity timeline per application
 - 📅 Interview scheduling and calendar integration
 - 📤 Export data to CSV/PDF
-- 📊 Interactive charts and visualizations
-- 🔔 Browser notifications for important updates
-- 🌙 Dark mode support
+- 🔔 Browser push notifications
 
 ---
 
@@ -131,8 +159,9 @@ Job Tracker PP is a personal job application management system that helps you or
 - **Bundler:** Vite 7.2.4
 - **Routing:** React Router DOM 7.12.0
 - **HTTP Client:** Axios 1.13.2
+- **Charts:** Recharts 2.15
 - **State Management:** React Context API
-- **Styling:** CSS3 (no framework)
+- **Styling:** CSS3 with CSS Variables (theme support)
 
 ### DevOps
 - **Containerization:** Docker
@@ -150,20 +179,27 @@ job-tracker-pp/
 │   ├── app/
 │   │   ├── api/               # API route handlers
 │   │   │   ├── auth.py        # Authentication endpoints
-│   │   │   ├── applications.py # Application CRUD endpoints
-│   │   │   └── analytics.py   # Analytics endpoints
+│   │   │   ├── applications.py # Application CRUD + follow-up fields
+│   │   │   └── analytics.py   # Analytics + reminders endpoints
 │   │   ├── core/              # Core utilities
 │   │   │   └── security.py    # JWT & password hashing
+│   │   ├── middleware/        # Custom middleware
+│   │   │   ├── logging.py     # Request logging
+│   │   │   ├── rate_limit.py  # Rate limiting with Redis
+│   │   │   └── security.py    # Security headers
 │   │   ├── models/            # SQLAlchemy models
 │   │   │   ├── user.py        # User model
-│   │   │   └── application.py # Application model
+│   │   │   └── application.py # Application model + follow-up fields
 │   │   ├── config.py          # Configuration settings
 │   │   ├── database.py        # Database connection
 │   │   └── main.py            # FastAPI app entry point
-│   ├── tests/                 # Unit tests
+│   ├── tests/                 # Unit tests (45 tests)
+│   │   ├── test_auth.py       # Authentication tests
+│   │   ├── test_applications.py # Application CRUD tests
+│   │   └── test_analytics.py  # Analytics tests
 │   ├── requirements.txt       # Python dependencies
-│   ├── .env.example          # Environment variables template
-│   └── README.md             # Backend documentation
+│   ├── Dockerfile            # Backend container config
+│   └── .env.example          # Environment variables template
 │
 ├── frontend/                  # React frontend
 │   ├── public/               # Static assets
@@ -171,26 +207,36 @@ job-tracker-pp/
 │   │   ├── components/       # React components
 │   │   │   ├── Auth/        # Login & Register components
 │   │   │   │   ├── Login.jsx
+│   │   │   │   ├── Login.test.jsx
 │   │   │   │   ├── Register.jsx
+│   │   │   │   ├── Register.test.jsx
 │   │   │   │   └── Auth.css
 │   │   │   └── Dashboard/   # Dashboard components
-│   │   │       ├── Dashboard.jsx
+│   │   │       ├── Dashboard.jsx      # Main dashboard with donut chart
+│   │   │       ├── Dashboard.test.jsx
+│   │   │       ├── Dashboard.css      # Two-column layout styles
 │   │   │       ├── ApplicationList.jsx
-│   │   │       ├── Dashboard.css
-│   │   │       └── ApplicationList.css
-│   │   ├── context/         # React Context (Auth)
-│   │   │   └── AuthContext.jsx
+│   │   │       ├── ApplicationList.css
+│   │   │       ├── ApplicationForm.jsx # Form with follow-up fields
+│   │   │       └── ApplicationForm.css
+│   │   ├── context/         # React Context
+│   │   │   ├── AuthContext.jsx   # Authentication state
+│   │   │   └── ThemeContext.jsx  # Dark/light theme state
 │   │   ├── services/        # API service layer
-│   │   │   └── api.js
-│   │   ├── App.jsx          # Main app component with routing
+│   │   │   └── api.js       # Axios client + API methods
+│   │   ├── App.jsx          # Main app with routing & theme
 │   │   ├── main.jsx         # React entry point
-│   │   └── index.css        # Global styles
+│   │   └── index.css        # Global styles + CSS variables
 │   ├── package.json         # Node dependencies
 │   ├── vite.config.js       # Vite configuration
+│   ├── Dockerfile           # Frontend container config
 │   └── .env.example        # Environment variables template
 │
+├── .github/
+│   └── workflows/
+│       └── ci.yml           # GitHub Actions CI/CD
 ├── .gitignore
-├── docker-compose.yml       # Docker orchestration
+├── docker-compose.yml       # Docker orchestration (4 services)
 ├── DOCKER.md               # Docker setup documentation
 └── README.md               # This file
 ```
@@ -401,6 +447,7 @@ Once the backend is running, visit:
 #### Analytics
 - `GET /api/analytics/summary` - Get summary statistics
 - `GET /api/analytics/timeline` - Get timeline data
+- `GET /api/analytics/reminders` - Get overdue/upcoming follow-ups
 
 ---
 
@@ -419,17 +466,19 @@ updated_at      TIMESTAMP
 
 ### Applications Table
 ```sql
-id              UUID PRIMARY KEY
-user_id         UUID FOREIGN KEY → users.id
-company_name    VARCHAR NOT NULL
-job_title       VARCHAR NOT NULL
-status          ENUM('applied', 'screening', 'interview', 'offer', 'accepted', 'rejected')
-date_applied    DATE NOT NULL
-job_url         VARCHAR
-notes           TEXT
-is_archived     BOOLEAN DEFAULT FALSE
-created_at      TIMESTAMP
-updated_at      TIMESTAMP
+id                UUID PRIMARY KEY
+user_id           UUID FOREIGN KEY → users.id
+company_name      VARCHAR NOT NULL
+job_title         VARCHAR NOT NULL
+status            ENUM('applied', 'screening', 'interview', 'offer', 'accepted', 'rejected')
+date_applied      DATE NOT NULL
+job_url           VARCHAR
+notes             TEXT
+follow_up_date    DATE                -- Reminder date for follow-up (indexed)
+last_contact_date DATE                -- Last interaction with recruiter
+is_archived       BOOLEAN DEFAULT FALSE
+created_at        TIMESTAMP
+updated_at        TIMESTAMP
 ```
 
 ---
@@ -552,6 +601,22 @@ This project showcases modern full-stack development with AI assistance:
 
 ### Version History
 
+**V1.2.0** (January 2026)
+- Donut chart for status breakdown visualization
+- Two-column dashboard layout with 2x2 stats grid
+- Follow-up tracking with reminder dates
+- Notification bell with overdue/upcoming alerts
+- Color-coded success rate (red/yellow/green)
+- Dark mode support with theme persistence
+- Dark mode tooltip fix for charts
+
+**V1.1.0** (January 2026)
+- Comprehensive test suite (45 backend + 39 frontend tests)
+- Security headers middleware
+- Password validation rules
+- Rate limiting with Redis
+- Structured request logging
+
 **V1.0.0** (January 2026)
 - Initial production release
 - Complete authentication and application management
@@ -568,6 +633,7 @@ This project showcases modern full-stack development with AI assistance:
 
 - [FastAPI](https://fastapi.tiangolo.com/) - Modern Python web framework
 - [React](https://react.dev/) - JavaScript library for building UIs
+- [Recharts](https://recharts.org/) - Composable charting library for React
 - [PostgreSQL](https://www.postgresql.org/) - Powerful open-source database
 - [Vite](https://vitejs.dev/) - Next generation frontend tooling
 - [Claude AI](https://claude.ai) - AI assistant by Anthropic used in building this project

@@ -37,6 +37,22 @@ class TimelineData(BaseModel):
     count: int  # Number of applications submitted on this date
 
 
+class ReminderItem(BaseModel):
+    """Schema for a single follow-up reminder."""
+    id: str  # Application UUID
+    company_name: str
+    job_title: str
+    status: str
+    follow_up_date: str  # Date in YYYY-MM-DD format
+    is_overdue: bool  # True if follow_up_date is in the past
+
+
+class RemindersResponse(BaseModel):
+    """Schema for reminders list response."""
+    upcoming: List[ReminderItem]  # Follow-ups due in the next 7 days
+    overdue: List[ReminderItem]  # Follow-ups that are past due
+
+
 # API Endpoints
 @router.get("/summary", response_model=AnalyticsSummary)
 async def get_analytics_summary(
@@ -145,3 +161,52 @@ async def get_timeline(
         {"date": str(date), "count": count}
         for date, count in timeline_data
     ]
+
+
+@router.get("/reminders", response_model=RemindersResponse)
+async def get_reminders(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+) -> RemindersResponse:
+    """Get upcoming and overdue follow-up reminders.
+
+    Returns applications that have a follow_up_date set, categorized as:
+    - Overdue: follow_up_date is before today
+    - Upcoming: follow_up_date is within the next 7 days (including today)
+
+    Args:
+        current_user: Authenticated user from JWT token
+        db: Database session
+
+    Returns:
+        RemindersResponse: Lists of overdue and upcoming follow-ups
+    """
+    today = datetime.utcnow().date()
+    week_from_now = today + timedelta(days=7)
+
+    # Query applications with follow_up_date set
+    applications_with_followup = db.query(Application).filter(
+        Application.user_id == current_user.id,
+        Application.is_archived.is_(False),
+        Application.follow_up_date.isnot(None)
+    ).order_by(Application.follow_up_date).all()
+
+    overdue = []
+    upcoming = []
+
+    for app in applications_with_followup:
+        reminder = ReminderItem(
+            id=str(app.id),
+            company_name=app.company_name,
+            job_title=app.job_title,
+            status=app.status.value,
+            follow_up_date=str(app.follow_up_date),
+            is_overdue=app.follow_up_date < today
+        )
+
+        if app.follow_up_date < today:
+            overdue.append(reminder)
+        elif app.follow_up_date <= week_from_now:
+            upcoming.append(reminder)
+
+    return RemindersResponse(upcoming=upcoming, overdue=overdue)

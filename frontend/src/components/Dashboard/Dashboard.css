@@ -95,6 +95,170 @@
   box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
 }
 
+/* Notification Bell */
+.notification-wrapper {
+  position: relative;
+}
+
+.btn-notification {
+  padding: 10px;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.btn-notification:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--danger);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 320px;
+  max-height: 400px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px var(--shadow-color);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.notification-header h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0;
+  line-height: 1;
+}
+
+.notification-close:hover {
+  color: var(--text-primary);
+}
+
+.notification-content {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.no-notifications {
+  padding: 30px;
+  text-align: center;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.notification-group {
+  padding: 10px 15px;
+}
+
+.notification-group-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0 0 10px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.notification-group-title.overdue {
+  color: var(--danger);
+}
+
+.notification-group-title.upcoming {
+  color: var(--accent-primary);
+}
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 5px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  gap: 10px;
+}
+
+.notification-item.overdue {
+  border-left: 3px solid var(--danger);
+}
+
+.notification-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-company {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notification-job {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notification-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 /* Main Content */
 .dashboard-main {
   padding: 30px 40px;
@@ -124,22 +288,76 @@
   border-left: 4px solid var(--danger);
 }
 
-/* Stats Grid */
-.stats-grid {
+/* Two Column Analytics Grid */
+.analytics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.analytics-column {
+  min-width: 0;
+}
+
+/* Chart Card (Left Column) */
+.chart-card {
+  background: var(--bg-card);
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  transition: background-color 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card h3 {
+  margin: 0 0 20px 0;
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Chart Container */
+.chart-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-chart-data {
+  flex: 1;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 16px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+/* 2x2 Stats Grid (Right Column) */
+.stats-grid-2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   gap: 20px;
-  margin-bottom: 30px;
+  height: 100%;
 }
 
 /* Stat Card */
 .stat-card {
   background: var(--bg-card);
-  padding: 30px;
+  padding: 25px;
   border-radius: 12px;
   box-shadow: 0 4px 12px var(--shadow-color);
   transition: all 0.3s;
   border-left: 4px solid var(--accent-primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .stat-card:hover {
@@ -148,7 +366,7 @@
 }
 
 .stat-value {
-  font-size: 42px;
+  font-size: 36px;
   font-weight: 700;
   color: var(--accent-primary);
   margin-bottom: 8px;
@@ -159,86 +377,33 @@
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* Status Breakdown Section */
-.status-breakdown {
-  background: var(--bg-card);
-  padding: 25px 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px var(--shadow-color);
-  transition: background-color 0.3s ease;
-}
-
-.status-breakdown h3 {
-  margin: 0 0 20px 0;
-  color: var(--text-primary);
-  font-size: 18px;
-  font-weight: 600;
-}
-
-/* Status Chips */
-.status-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.status-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  color: white;
-  transition: transform 0.2s;
-}
-
-.status-chip:hover {
-  transform: scale(1.05);
-}
-
-.status-name {
-  text-transform: capitalize;
-}
-
-.status-count {
-  background: rgba(255, 255, 255, 0.3);
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 12px;
-}
-
-/* Status-specific colors */
-.status-chip.status-applied {
-  background: #3498db;
-}
-
-.status-chip.status-screening {
-  background: #f39c12;
-}
-
-.status-chip.status-interview {
-  background: #9b59b6;
-}
-
-.status-chip.status-offer {
-  background: #2ecc71;
-}
-
-.status-chip.status-accepted {
-  background: #27ae60;
-}
-
-.status-chip.status-rejected {
+/* Success Rate Color Classes */
+.stat-value.rate-red {
   background: #e74c3c;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-value.rate-yellow {
+  background: #f39c12;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-value.rate-green {
+  background: #27ae60;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Applications Section */
@@ -248,7 +413,11 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .stats-grid {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid-2x2 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -269,21 +438,25 @@
   .header-right {
     width: 100%;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 10px;
   }
 
   .user-greeting {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
   }
 
   .dashboard-main {
     padding: 20px;
   }
 
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
+  .analytics-grid {
+    gap: 20px;
+  }
+
+  .chart-card {
+    padding: 20px;
   }
 
   .stat-card {
@@ -291,20 +464,15 @@
   }
 
   .stat-value {
-    font-size: 36px;
+    font-size: 28px;
   }
 
-  .status-breakdown {
-    padding: 20px;
-  }
-
-  .status-chips {
-    gap: 8px;
-  }
-
-  .status-chip {
-    font-size: 12px;
-    padding: 6px 12px;
+  .notification-dropdown {
+    position: fixed;
+    top: 70px;
+    right: 10px;
+    left: 10px;
+    width: auto;
   }
 
   .btn-add-application,
@@ -316,12 +484,26 @@
 
 @media (max-width: 480px) {
   .header-right {
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-theme-toggle,
+  .btn-notification {
+    flex: 0 0 auto;
   }
 
   .btn-add-application,
   .btn-logout {
-    width: 100%;
+    flex: 1;
+  }
+
+  .stats-grid-2x2 {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-value {
+    font-size: 32px;
   }
 }

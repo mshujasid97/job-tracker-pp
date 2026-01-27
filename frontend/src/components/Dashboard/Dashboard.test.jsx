@@ -25,6 +25,7 @@ vi.mock('../../services/api', () => ({
   analyticsAPI: {
     getSummary: vi.fn(),
     getTimeline: vi.fn(),
+    getReminders: vi.fn(),
   },
   applicationsAPI: {
     getAll: vi.fn(),
@@ -106,6 +107,7 @@ describe('Dashboard Component', () => {
 
     // Default mock implementations
     analyticsAPI.getSummary.mockResolvedValue({ data: mockStats })
+    analyticsAPI.getReminders.mockResolvedValue({ data: { upcoming: [], overdue: [] } })
     applicationsAPI.getAll.mockResolvedValue({ data: [] })
   })
 
@@ -184,14 +186,15 @@ describe('Dashboard Component', () => {
       expect(screen.getByText(/success rate/i)).toBeInTheDocument()
     })
 
-    it('displays status breakdown', async () => {
+    it('displays status breakdown chart', async () => {
       renderDashboard()
 
       await waitFor(() => {
         expect(screen.getByText(/status breakdown/i)).toBeInTheDocument()
       })
 
-      expect(screen.getByText('applied')).toBeInTheDocument()
+      // Chart renders with Recharts - verify the chart container exists
+      expect(document.querySelector('.chart-container')).toBeInTheDocument()
     })
 
     it('displays error when analytics fetch fails', async () => {

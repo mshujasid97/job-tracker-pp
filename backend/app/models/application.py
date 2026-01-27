@@ -85,6 +85,10 @@ class Application(Base):
     job_url = Column(String, nullable=True)  # URL to the job posting
     notes = Column(Text, nullable=True)  # User's notes (interview feedback, rejection reason, etc.)
 
+    # Follow-up tracking: Help users manage their application follow-ups
+    follow_up_date = Column(Date, nullable=True, index=True)  # When to follow up (indexed for reminder queries)
+    last_contact_date = Column(Date, nullable=True)  # Last interaction with recruiter/company
+
     # Archive flag: Soft-delete mechanism (indexed for fast filtering active vs archived)
     # When True, application is hidden from default list views but not permanently deleted
     is_archived = Column(Boolean, default=False, index=True)

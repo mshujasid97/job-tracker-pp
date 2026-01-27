@@ -35,6 +35,8 @@ class ApplicationCreate(BaseModel):
     date_applied: date
     job_url: Optional[str] = None
     notes: Optional[str] = None
+    follow_up_date: Optional[date] = None  # Reminder date for follow-up
+    last_contact_date: Optional[date] = None  # Last interaction with recruiter
 
 
 class ApplicationUpdate(BaseModel):
@@ -45,6 +47,8 @@ class ApplicationUpdate(BaseModel):
     date_applied: Optional[date] = None
     job_url: Optional[str] = None
     notes: Optional[str] = None
+    follow_up_date: Optional[date] = None
+    last_contact_date: Optional[date] = None
 
 
 class ApplicationResponse(BaseModel):
@@ -56,6 +60,8 @@ class ApplicationResponse(BaseModel):
     date_applied: date
     job_url: Optional[str]
     notes: Optional[str]
+    follow_up_date: Optional[date]
+    last_contact_date: Optional[date]
     is_archived: bool
     created_at: datetime
     updated_at: datetime

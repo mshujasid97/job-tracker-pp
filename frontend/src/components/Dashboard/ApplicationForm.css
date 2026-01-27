@@ -131,6 +131,19 @@
   margin-left: 2px;
 }
 
+/* Form Row - Side by side fields */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Form Inputs */
 .form-group input[type='text'],
 .form-group input[type='url'],
